@@ -19,6 +19,7 @@ import {
 import Row from './Row.js';
 
 let arr = [];
+let count=1;
 class TodoApp extends Component {
   constructor(props) {
     super(props);
@@ -27,20 +28,47 @@ class TodoApp extends Component {
       text: "",
       dataSource: dataSource.cloneWithRows(arr)
     };
+   
   }
   onAdd() {
-    arr.push(this.state.text);
-    this.dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-    this.setState({
-      text: "",
-      dataSource: this.dataSource.cloneWithRows(arr)
-    });
+    if (this.state.text.length > 0) {
+      arr.push({
+        word: this.state.text,
+        state: true,
+        id : count
+      });
+      count=count+1;
+      this.dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+      this.setState({
+        text: "",
+        dataSource: this.dataSource.cloneWithRows(arr)
+      });
+    }
+
+
   }
   renderSeparator(sectionID, rowID) {
     return (
       <View style={styles.separator} key={sectionID + rowID}/>
     );
   }
+
+updateRow(value,id){
+  console.log(value, id)
+  for(i in arr){
+    console.log(arr[i])
+    if(arr[i].id===id){
+        arr[i].state=value;
+        console.log(arr[i])
+    }    
+  }  
+  this.setState({
+        dataSource: this.dataSource.cloneWithRows(arr)
+      });
+
+  
+}
+
   render() {
     return (
       <View style={{ flexDirection: "column" }}>
@@ -68,7 +96,7 @@ class TodoApp extends Component {
 
               style={styles.listView}
               dataSource={this.state.dataSource}
-              renderRow={(rowData) => <Row txt={rowData}/>}
+              renderRow={(rowData) => <Row onChange ={(value,id)=>this.updateRow(value,id) } row={rowData}/>}
               renderHeader={() => <Header />}
               renderSeparator={this.renderSeparator}
               enableEmptySections={true}
