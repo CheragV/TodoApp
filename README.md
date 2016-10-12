@@ -1,7 +1,7 @@
 # TodoApp
 react-native basic implementations
 
-This is a basic implementation of react-natie features.
+This is a basic implementation of react-native features.
 Following will be covered :
     TouchableOpacity
     ListView
