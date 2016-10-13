@@ -13,39 +13,39 @@ import {
   RecyclerViewBackedScrollView,
   StyleSheet,
   ScrollView,
+  SegmentedControlIOS,
   Text,
   View
 } from 'react-native';
 import Row from './Row.js';
 
 let arr = [];
-let count=1;
+let count = 1;
 class TodoApp extends Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.state = {
+      selectedIndex: 0,
       text: "",
       dataSource: dataSource.cloneWithRows(arr)
     };
-   
+
   }
   onAdd() {
     if (this.state.text.length > 0) {
       arr.push({
         word: this.state.text,
         state: true,
-        id : count
+        id: count
       });
-      count=count+1;
+      count = count + 1;
       this.dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
       this.setState({
         text: "",
         dataSource: this.dataSource.cloneWithRows(arr)
       });
     }
-
-
   }
   renderSeparator(sectionID, rowID) {
     return (
@@ -53,21 +53,30 @@ class TodoApp extends Component {
     );
   }
 
-updateRow(value,id){
-  console.log(value, id)
-  for(i in arr){
-    console.log(arr[i])
-    if(arr[i].id===id){
-        arr[i].state=value;
-        console.log(arr[i])
-    }    
-  }  
-  this.setState({
-        dataSource: this.dataSource.cloneWithRows(arr)
-      });
-
-  
-}
+  updateRow(value, id) {
+    for (i in arr) {
+      if (arr[i].id === id) {
+        arr[i].state = value;
+      }
+    }
+    this.setState({
+      dataSource: this.dataSource.cloneWithRows(arr)
+    });
+    console.log("row updated")
+  }
+  renderNewList() {
+    console.log("called")
+    var dataClone =[];
+    for (var i in arr) {
+      console.log(arr[i].state == this.state.selectedIndex)
+      if (arr[i].state == this.state.selectedIndex)
+        dataClone.push(arr[i]);
+    }
+    this.dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    this.setState({
+      dataSource: this.dataSource.cloneWithRows(dataClone)
+    });
+  }
 
   render() {
     return (
@@ -90,21 +99,32 @@ updateRow(value,id){
           </TouchableOpacity>
         </View>
 
-        <View  style={{ flex: 10, paddingTop: 0, backgroundColor: "#BF7E45" }}>
-          <View style={{ borderWidth: 2, height: 480, backgroundColor: "#fff" }}>
+        <View  style={{ flex: 9, paddingTop: 0, backgroundColor: "#fff" }}>
+          <View style={{ flex: 7, borderWidth: 0, height: 430, backgroundColor: "#fff" }}>
             <ListView
-
               style={styles.listView}
               dataSource={this.state.dataSource}
-              renderRow={(rowData) => <Row onChange ={(value,id)=>this.updateRow(value,id) } row={rowData}/>}
+              renderRow={(rowData) => <Row onChange ={(value, id) => this.updateRow(value, id) } row={rowData}/>}
               renderHeader={() => <Header />}
               renderSeparator={this.renderSeparator}
               enableEmptySections={true}
               scrollEnabled={true}
               />
           </View>
+          <View style={{ flex: 2 }}>
+            <SegmentedControlIOS
+              enable={true}
+              values={['InComplete', 'Completed']}
+              selectedIndex={this.state.selectedIndex}
+              
+              onChange={(event) => {
+                this.setState({ selectedIndex: event.nativeEvent.selectedSegmentIndex });
+                console.log("HI");
+                this.renderNewList();
+              } }
+              />
+          </View>
         </View>
-
       </View>
 
     );

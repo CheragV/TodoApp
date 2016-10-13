@@ -26,7 +26,7 @@ class Row extends React.Component {
           onValueChange={(value) => { this.swap(value,this.props.row.id) } }
           style={{ marginBottom: 0 }}
           value={this.props.row.state}
-          />dsdfsef
+          />
       </View>
     );
   }
