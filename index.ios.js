@@ -39,7 +39,7 @@ class TodoApp extends Component {
         state: true,
         id: count
       });
-      count = count + 1;
+      count++;
       this.dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
       this.setState({
         text: "",
@@ -65,16 +65,8 @@ class TodoApp extends Component {
     console.log("row updated")
   }
   renderNewList() {
-    console.log("called")
-    var dataClone =[];
-    for (var i in arr) {
-      console.log(arr[i].state == this.state.selectedIndex)
-      if (arr[i].state == this.state.selectedIndex)
-        dataClone.push(arr[i]);
-    }
-    this.dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
     this.setState({
-      dataSource: this.dataSource.cloneWithRows(dataClone)
+      dataSource: this.dataSource.cloneWithRows(arr.filter((value) => value.state == this.state.selectedIndex))
     });
   }
 
